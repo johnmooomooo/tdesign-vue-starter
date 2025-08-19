@@ -89,8 +89,8 @@ import { UserIcon, LockOnIcon, BrowseOffIcon, BrowseIcon, RefreshIcon } from 'td
 
 const INITIAL_DATA = {
   phone: '',
-  account: 'admin',
-  password: 'admin',
+  account: '',
+  password: '',
   verifyCode: '',
   checked: false,
 };
