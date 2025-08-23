@@ -57,6 +57,28 @@ export default [
     }),
   },
   {
+    url: '/api/nodes-list',
+    method: 'get',
+    response: () => ({
+      code: 0,
+      data: {
+        ...Mock.mock({
+          'list|10-30': [
+            {
+              'index|+1': 1,
+              domain: '@domain',
+              region: '@province',
+              ipv4: '@ip',
+              status: '@pick(["running","stopped","error","initializing"])',
+              certExpire: '@date("yyyy-MM-dd")',
+              lastCheck: '@datetime',
+            },
+          ],
+        }),
+      },
+    }),
+  },
+  {
     url: '/api/detail-basic',
     method: 'get',
     response: () => ({
