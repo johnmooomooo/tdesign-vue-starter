@@ -59,24 +59,46 @@ export default [
   {
     url: '/api/nodes-list',
     method: 'get',
-    response: () => ({
-      code: 0,
-      data: {
-        ...Mock.mock({
-          'list|10-30': [
-            {
-              'index|+1': 1,
-              domain: '@domain',
-              region: '@province',
-              ipv4: '@ip',
-              status: '@pick(["running","stopped","error","initializing"])',
-              certExpire: '@date("yyyy-MM-dd")',
-              lastCheck: '@datetime',
-            },
-          ],
-        }),
-      },
-    }),
+    response: ({ query }) => {
+      const page = parseInt(query.page || '1', 10);
+      const pageSize = parseInt(query.pageSize || '20', 10);
+      const domain = query.domain || '';
+      const region = query.region || '';
+      const status = query.status || '';
+
+      // generate a fixed seed of items then filter/page
+      const pool = Mock.mock({
+        'list|50': [
+          {
+            'index|+1': 1,
+            domain: '@domain',
+            region: '@province',
+            ipv4: '@ip',
+            status: '@pick(["running","stopped","error","initializing"])',
+            certExpire: '@date("yyyy-MM-dd")',
+            lastCheck: '@datetime',
+          },
+        ],
+      }).list as any[];
+
+      let filtered = pool;
+      if (domain) filtered = filtered.filter((i) => i.domain.indexOf(domain) > -1);
+      if (region) filtered = filtered.filter((i) => i.region === region);
+      if (status) filtered = filtered.filter((i) => i.status === status);
+
+      const total = filtered.length;
+      const start = (page - 1) * pageSize;
+      const end = start + pageSize;
+      const list = filtered.slice(start, end);
+
+      return {
+        code: 0,
+        data: {
+          total,
+          list,
+        },
+      };
+    },
   },
   {
     url: '/api/detail-basic',

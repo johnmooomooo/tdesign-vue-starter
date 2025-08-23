@@ -99,7 +99,7 @@ export default {
       rowKey: 'index',
       verticalAlign: 'top',
       hover: true,
-      pagination: { defaultPageSize: 20, total: 0, defaultCurrent: 1 },
+      pagination: { pageSize: 20, total: 0, current: 1 },
       confirmVisible: false,
       deleteIdx: -1,
       deleteRow: null,
@@ -116,15 +116,23 @@ export default {
     this.fetchData();
   },
   methods: {
-    fetchData() {
+    fetchData(page = this.pagination.current) {
       this.dataLoading = true;
+      const params = {
+        page,
+        pageSize: this.pagination.pageSize,
+        domain: this.formData.domain || undefined,
+        region: this.formData.region || undefined,
+        status: this.formData.status || undefined,
+      };
       this.$request
-        .get('/api/nodes-list')
+        .get('/api/nodes-list', { params })
         .then((res) => {
           if (res.code === 0) {
             const list = res.data?.list || [];
             this.data = list;
-            this.pagination.total = list.length;
+            this.pagination.total = res.data?.total || list.length;
+            this.pagination.current = page;
           }
         })
         .catch((e) => console.error(e))
@@ -149,8 +157,7 @@ export default {
       this.data = filtered;
     },
     rehandlePageChange(curr) {
-      // 简单分页占位
-      console.log('page', curr);
+      this.fetchData(curr.current || curr);
     },
     goDetail(row) {
       this.$router.push(`/nodes/${row.index}/overview`);
