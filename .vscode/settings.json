@@ -1,7 +1,7 @@
 {
   "eslint.validate": ["javascript", "javascriptvue", "typescript", "typescriptreact"],
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": "explicit"
   },
   "cSpell.words": ["tdesign", "tvision", "echarts", "nprogress", "commitlint", "stylelint", "vuex", "qrcode"]
 }
